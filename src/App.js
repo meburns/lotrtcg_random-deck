@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import './App.css';
 import CARDS from "./all-lotrtcg-cards.json";
-const CARDS_TOTAL = 3496;
+import { Grid2 } from '@mui/material';
 
 function App() {
-  const [deckSize, setDeckSize] = useState(0);
+  const [deckSize, setDeckSize] = useState(30);
   const [fellowship, setFellowship] = useState([]);
   const [shadow, setShadow] = useState([]);
   const [sites, setSites] = useState([]);
@@ -17,45 +17,60 @@ function App() {
     // FELLOWSHIP
     for (let i=0; i<deckSize; i++) {
       let n = Math.floor(Math.random() * FP_CARDS.length);
-      // Load card
-      // Check if card is desired type
-      // Pick card
-      rd[i] = JSON.stringify(FP_CARDS[n].Name);
+      rd[i] = FP_CARDS[n];
     }
     setFellowship(rd);
     // SHADOW
     rd = [];
     for (let i=0; i<deckSize; i++) {
       let n = Math.floor(Math.random() * SH_CARDS.length);
-      // Load card
-      // Check if card is desired type
-      // Pick card
-      rd[i] = JSON.stringify(SH_CARDS[n].Name);
+      rd[i] = SH_CARDS[n];
     }
     setShadow(rd);
     // SITES
     rd = [];
-    for (let i=0; i<9; i++) {
-      let n = Math.floor(Math.random() * SI_CARDS.length);
-      // Load card
-      // Check if card is desired type
-      // Pick card
-      rd[i] = JSON.stringify(SI_CARDS[n].Name);
+    for (let i=1; i<10; i++) {
+      const SI_N_CARDS = SI_CARDS.filter(x => x['Signet/Site#'] === `${i}`);
+      console.log(SI_N_CARDS);
+      
+      let n = Math.floor(Math.random() * SI_N_CARDS.length);
+      rd[i] = SI_N_CARDS[n];
     }
     setSites(rd);
   }
+
+  function getRow(r) {
+    return (
+      <li>
+        <span class="tooltip">
+          {r.Name}
+          <span>
+            <img class="ttimage" src={`https://i.lotrtcgpc.net/decipher/${r.Imagefile}.jpg`} />
+          </span>
+        </span>
+      </li>
+    );
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <div>
-          Fellowship: {fellowship.map(x => <p>{x}</p>)}
-        </div>
-        <div>
-          Shadow: {shadow.map(x => <p>{x}</p>)}
-        </div>
-        <div>
-          Sites: {sites.map(x => <p>{x}</p>)}
-        </div>
+        <Grid2 container>
+          <Grid2 item md={4} sm={6} xs={12} className="deck-column">
+            <h2>Fellowship:</h2> 
+            <ul>
+            {fellowship.map(x => getRow(x))}
+            </ul>
+          </Grid2>
+          <Grid2 item md={4} sm={6} xs={12} className="deck-column">
+            <h2>Shadow:</h2>
+            <ul>{shadow.map(x => getRow(x))}</ul>
+          </Grid2>
+          <Grid2 item md={4} sm={6} xs={12} className="deck-column">
+            <h2>Sites:</h2>
+            <ul>{sites.map(x => getRow(x))}</ul>
+          </Grid2>
+        </Grid2>
         <p>
           Deck Size: <input type="number" value={deckSize} onChange={(e)=>{setDeckSize(e.target.value)}}></input>
         </p>
